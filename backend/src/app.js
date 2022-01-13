@@ -1,56 +1,42 @@
 import express from "express";
 import axios from "axios";
+import axiosRetry from "axios-retry";
 import bodyParser from "body-parser";
+import cors from "cors";
 
 const PORT = 8000;
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(cors());
+axiosRetry(axios, { retries: 10 });
 
-//   axios
-//     .post("http://localhost:8000/", { textToCheck: textToCheck })
-//     .then((response) => {
-//       res.send(response.data);
-//     })
-//     .catch((error) => {
-//       console.log(error);
-//     });
+app.post("/checkText", async(req, res) => {
+    const textToCheck = req.body.textToCheck;
+    console.log(`[i] Check Text: ${textToCheck}`);
 
-app.post("/checkText", (req, res) => {
-  const textToCheck = req.body.textToCheck;
-  console.log(`[i] Check Text: ${textToCheck}`);
+    if (textToCheck == "") {
+        res.send({ error: "empty text" });
+        return;
+    }
 
-  let retry = false;
-
-  do {
-    retry = false;
-    axios
-      .post(
-        "https://api-inference.huggingface.co/models/crazould/indonesian_hate_speech_detection",
-        {
-          inputs: textToCheck,
-        },
-        {
-          headers: {
-            Authorization: "Bearer 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",
-          },
-        }
-      )
-      .then((response) => {
-        console.log(response.data[0]);
-        res.send(response.data[0]);
-      })
-      .catch((error) => {
-        const err = error.response.data.error;
-        console.log(`[!] ${err}`);
-        retry =
-          err ==
-          "Model crazould/indonesian_hate_speech_detection is currently loading";
-      });
-  } while (retry);
+    await axios
+        .post(
+            "https://api-inference.huggingface.co/models/crazould/indonesian_hate_speech_detection", {
+                inputs: textToCheck,
+            }, {
+                headers: {
+                    Authorization: "Bearer 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",
+                },
+            }
+        )
+        .then((response) => {
+            console.log(response.data[0]);
+            res.send(response.data[0]);
+        });
 });
 
 app.listen(PORT, () => {
-  console.log(`[i] Listening on ${PORT}`);
+    console.log(`[i] Listening on ${PORT}`);
 });

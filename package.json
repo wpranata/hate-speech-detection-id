@@ -1,0 +1,10 @@
+{
+  "devDependencies": {
+    "create-react-app": "^5.0.0"
+  },
+  "dependencies": {
+    "axios": "^0.24.0",
+    "body-parser": "^1.19.1",
+    "cheerio": "^1.0.0-rc.10"
+  }
+}

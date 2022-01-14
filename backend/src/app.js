@@ -34,6 +34,9 @@ app.post("/checkText", async(req, res) => {
         .then((response) => {
             console.log(response.data[0]);
             res.send(response.data[0]);
+        })
+        .catch((error) => {
+            console.log(error);
         });
 });
 

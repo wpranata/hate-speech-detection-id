@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import axios from "axios";
 import Chart from "chart.js/auto";
-import { Bar } from "react-chartjs-2";
+import { Chart as Ch } from "react-chartjs-2";
 
 const App = () => {
   const [datas, setDatas] = useState([0, 0, 0]);
@@ -56,9 +56,9 @@ const App = () => {
       .then((response) => {
         const responseData = response.data;
         setDatas([
-          responseData[0].score,
-          responseData[1].score,
-          responseData[2].score,
+          responseData[0].score * 100,
+          responseData[1].score * 100,
+          responseData[2].score * 100,
         ]);
       })
       .catch(() => {
@@ -67,9 +67,9 @@ const App = () => {
   };
 
   return (
-    <div className="bg-gradient-to-r from-fuchsia-500 to-blue-600 h-screen">
-      <div className="bg-black/25 flex flex-col items-center justify-center h-screen">
-        <div className="font-bold p-10">
+    <div className="bg-gradient-to-r from-fuchsia-500 to-blue-600 min-h-screen h-full">
+      <div className="bg-black/25 flex flex-col items-center justify-center min-h-screen h-full">
+        <div className="font-bold pt-10 pl-10 pr-10">
           <h1 className="text-center text-white text-3xl drop-shadow-2xl">
             Hate Speech Recognizer
           </h1>
@@ -87,8 +87,19 @@ const App = () => {
             </form>
           </div>
         </div>
+        <div>
+          <h1 className="text-white text-center text-xl font-bold italic p-10 max-w-7xl">
+            "{textRef.current ? textRef.current.value : ""}"
+          </h1>
+        </div>
         <div className="w-auto h-auto">
-          <Bar data={data} height={400} width={600} options={options} />
+          <Ch
+            type="bar"
+            data={data}
+            height={400}
+            width={600}
+            options={options}
+          />
         </div>
       </div>
     </div>
